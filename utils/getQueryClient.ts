@@ -4,14 +4,7 @@ import { cache } from 'react';
 const getQueryClient = cache(
   () =>
     new QueryClient({
-      defaultOptions: {
-        queries: {
-          refetchOnWindowFocus:
-            (process.env.NEXT_PUBLIC_REFETCH_ON_FOCUS &&
-              process.env.NEXT_PUBLIC_REFETCH_ON_FOCUS === 'true') ||
-            false
-        }
-      }
+      defaultOptions: {}
     })
 );
 export default getQueryClient;
