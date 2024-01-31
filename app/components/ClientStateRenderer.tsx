@@ -1,10 +1,9 @@
 'use client';
 import { State } from '@/utils/api';
-import getQueryClient from '@/utils/getQueryClient';
-import { QueryClient, useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 export default function ClientStateRenderer({ data }: { data: State[] }) {
-  const queryClient = getQueryClient();
+  const queryClient = useQueryClient();
 
   const { data: state } = useQuery({
     queryKey: ['state'],
