@@ -1,26 +1,34 @@
 'use client';
 import { State } from '@/utils/api';
-import { useState } from 'react';
+import getQueryClient from '@/utils/getQueryClient';
+import { useQuery } from '@tanstack/react-query';
 
 export default function ClientStateRenderer({ data }: { data: State[] }) {
-  const [state, setState] = useState(data);
-  const [updateValue, setUpdateValue] = useState('');
+  const queryClient = getQueryClient();
+
+  const { data: state } = useQuery({
+    queryKey: ['state'],
+    queryFn: () => getState(),
+    initialData: data
+  });
 
   async function updateName(id: number) {
     const newUpdateValue = new Date().getTime().toString();
-    setUpdateValue(newUpdateValue);
+
     await fetch('/api/updateName', {
       method: 'POST',
       body: JSON.stringify({ id, name: newUpdateValue })
     });
-    await updateState();
+
+    await queryClient.invalidateQueries({ queryKey: ['state'] });
   }
 
-  async function updateState() {
+  async function getState() {
+    console.log('estoy aca?');
     const data = await fetch('/api/getState');
     const { data: state } = await data.json();
 
-    setState(state as State[]);
+    return state as State[];
   }
 
   return (
@@ -30,7 +38,6 @@ export default function ClientStateRenderer({ data }: { data: State[] }) {
         {state.map(({ id, name }) => (
           <li key={id}>
             <p>Value recieved:{name}</p>
-            <p>UpdateValue:{updateValue} </p>
             <button onClick={() => updateName(id)}> update name </button>
           </li>
         ))}
